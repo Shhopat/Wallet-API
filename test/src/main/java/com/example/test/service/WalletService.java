@@ -12,15 +12,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class WalletService {
     private final WalletRepository walletRepository;
 
     @Transactional
+    public Wallet findById(UUID walletId) {
+        return walletRepository.findById(walletId)
+                .orElseThrow(() -> new WalletNotFoundException(walletId));
+    }
+
+
+    @Transactional
     public void operate(WalletOperationDTO walletOperationDTO) {
-        Wallet wallet = walletRepository.findById(walletOperationDTO.getWalletId())
-                .orElseThrow(() -> new WalletNotFoundException(walletOperationDTO.getWalletId()));
+        Wallet wallet = findById(walletOperationDTO.getWalletId());
         if (walletOperationDTO.getAmount() <= 0) {
             throw new InvalidAmountException();
         }
