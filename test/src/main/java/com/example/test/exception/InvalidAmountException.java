@@ -1,4 +1,4 @@
-package com.example.test.util;
+package com.example.test.exception;
 
 public class InvalidAmountException extends RuntimeException {
     public InvalidAmountException() {

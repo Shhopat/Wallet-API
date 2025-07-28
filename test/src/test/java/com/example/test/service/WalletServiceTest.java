@@ -4,10 +4,10 @@ import com.example.test.dto.WalletOperationDTO;
 import com.example.test.enums.OperationType;
 import com.example.test.models.Wallet;
 import com.example.test.repository.WalletRepository;
-import com.example.test.util.InvalidAmountException;
-import com.example.test.util.NotEnoughBalanceException;
-import com.example.test.util.UnsupportedOperationException;
-import com.example.test.util.WalletNotFoundException;
+import com.example.test.exception.InvalidAmountException;
+import com.example.test.exception.NotEnoughBalanceException;
+import com.example.test.exception.UnsupportedOperationException;
+import com.example.test.exception.WalletNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -115,11 +115,23 @@ public class WalletServiceTest {
     public void shouldThrowInvalidAmountException() {
         WalletOperationDTO walletOperationTestDTO = new WalletOperationDTO(
                 UUID.fromString("123e4567-e89b-12d3-a456-426614174000"),
-                OperationType.TEST, -1000L);
+                OperationType.DEPOSIT, -1000L);
         Mockito.when(walletRepository.findById(walletOperationTestDTO.getWalletId()))
                 .thenReturn(Optional.of(wallet));
 
         Assertions.assertThrows(InvalidAmountException.class, () -> walletService.operate(walletOperationTestDTO));
+
+    }
+
+    @Test
+    public void shouldGetBalance() {
+        Mockito.when(walletRepository.findById(walletOperationWithdrawDTO.getWalletId()))
+                .thenReturn(Optional.of(wallet));
+        Long balance = walletService.getBalance(walletOperationWithdrawDTO.getWalletId());
+
+        Assertions.assertEquals(500L, balance);
+
+        Mockito.verify(walletRepository).findById(walletOperationWithdrawDTO.getWalletId());
 
     }
 }

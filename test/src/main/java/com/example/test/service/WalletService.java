@@ -1,13 +1,12 @@
 package com.example.test.service;
 
 import com.example.test.dto.WalletOperationDTO;
-import com.example.test.enums.OperationType;
 import com.example.test.models.Wallet;
 import com.example.test.repository.WalletRepository;
-import com.example.test.util.InvalidAmountException;
-import com.example.test.util.NotEnoughBalanceException;
-import com.example.test.util.UnsupportedOperationException;
-import com.example.test.util.WalletNotFoundException;
+import com.example.test.exception.InvalidAmountException;
+import com.example.test.exception.NotEnoughBalanceException;
+import com.example.test.exception.UnsupportedOperationException;
+import com.example.test.exception.WalletNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +42,11 @@ public class WalletService {
             default -> throw new UnsupportedOperationException(walletOperationDTO.getOperationType().toString());
         }
         walletRepository.save(wallet);
+    }
 
+    @Transactional
+    public Long getBalance(UUID walletId) {
+        return findById(walletId).getBalance();
 
     }
 }

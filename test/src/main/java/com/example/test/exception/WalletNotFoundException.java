@@ -1,4 +1,4 @@
-package com.example.test.util;
+package com.example.test.exception;
 
 import java.util.UUID;
 
