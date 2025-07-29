@@ -51,11 +51,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-<!--        &lt;!&ndash; Liquibase &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.liquibase</groupId>-->
-<!--            <artifactId>liquibase-core</artifactId>-->
-<!--        </dependency>-->
+        <!-- Liquibase -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
 
         <!-- PostgreSQL Driver -->
         <dependency>
@@ -81,6 +81,17 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.properties</include>
+                    <include>**/*.yml</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <!-- Maven Compiler Plugin -->
             <plugin>

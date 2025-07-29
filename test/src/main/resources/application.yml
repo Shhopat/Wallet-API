@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: test
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/wallet_db
+    username: postgres
+    password: 1297
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+        format_sql: true
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.yml
+
+  output:
+    ansi:
+      enabled: ALWAYS
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework: DEBUG
+      springframework.security: DEBUG
+      hibernate:
+        SQL: ERROR
+        type:
+          descriptor:
+            sql: ERROR
