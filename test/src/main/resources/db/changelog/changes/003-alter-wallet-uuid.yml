@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-enable-pgcrypto
+      author: ibragim
+      dbms: postgresql
+      changes:
+        - sql:
+            sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+  - changeSet:
+      id: 004-alter-wallet-uuid
+      author: ibragim
+      dbms: postgresql
+      changes:
+        - sql:
+            sql: ALTER TABLE wallet ALTER COLUMN id SET DEFAULT gen_random_uuid();

@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-alter-wallet-drop-column-default-uuid
+      author: ibragim
+      changes:
+        - sql:
+            sql: ALTER TABLE wallet ALTER COLUMN id DROP DEFAULT;

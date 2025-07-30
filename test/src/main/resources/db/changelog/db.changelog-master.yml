@@ -3,3 +3,7 @@ databaseChangeLog:
       file: db/changelog/changes/001-create-wallet-table.yml
   - include:
       file: db/changelog/changes/002-insert-wallet-data.yml
+  - include:
+      file: db/changelog/changes/003-alter-wallet-uuid.yml
+  - include:
+      file: db/changelog/changes/004-alter-wallet-drop-column-default-uuid.yml
