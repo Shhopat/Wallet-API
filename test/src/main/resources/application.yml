@@ -1,36 +1,44 @@
-version: '3.8'
+spring:
+  application:
+    name: wallet
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+        format_sql: true
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  liquibase:
+    enabled: ${SPRING_LIQUIBASE_ENABLED}
+    change-log: ${SPRING_LIQUIBASE_CHANGE_LOG}
+  output:
+    ansi:
+      enabled: ALWAYS
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
 
-services:
-  app:
-    image: myapp:latest
-    env_file: secret.env
-
-    ports:
-      - "${HOST_PORT:-8080}:8080"
-
-    depends_on:
-      - db
-
-    networks:
-      - wallet-network
-
-    restart: unless-stopped
-
-  db:
-    image: postgres:15
-    env_file: secret.env
-
-    volumes:
-      - db-data:/var/lib/postgresql/data
-
-    networks:
-      - wallet-network
-
-    restart: unless-stopped
-
-volumes:
-  db-data:
-
-networks:
-  wallet-network:
-    driver: bridge
+logging:
+  level:
+    root: INFO
+    org:
+      springframework: DEBUG
+      springframework.security: DEBUG
+      hibernate:
+        SQL: ERROR
+        type:
+          descriptor:
+            sql: ERROR
