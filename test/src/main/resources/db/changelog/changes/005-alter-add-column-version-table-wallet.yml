@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-alter-add-column-version-table-wallet
+      author: ibragim
+      changes:
+        - sql:
+            sql: ALTER TABLE wallet ADD COLUMN version BIGINT DEFAULT 0 NOT NULL;

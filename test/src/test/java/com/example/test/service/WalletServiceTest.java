@@ -51,51 +51,53 @@ public class WalletServiceTest {
 
     @Test
     public void shouldOperateWithDeposit() {
-        Mockito.when(walletRepository.findById(
-                        walletOperationDepositDTO.getWalletId()))
-                .thenReturn(Optional.of(wallet));
+        Mockito.when(walletRepository.deposit(
+                walletOperationDepositDTO.getAmount(),
+                walletOperationDepositDTO.getWalletId())).thenReturn(1);
 
         walletService.operate(walletOperationDepositDTO);
 
-        Assertions.assertEquals(1500L, wallet.getBalance());
+        Mockito.verify(walletRepository).deposit(walletOperationDepositDTO.getAmount(), walletOperationDepositDTO.getWalletId());
 
-        Mockito.verify(walletRepository).findById(walletOperationDepositDTO.getWalletId());
-        Mockito.verify(walletRepository).save(wallet);
     }
 
     @Test
     public void shouldOperateWithWithdraw() {
-        Mockito.when(walletRepository.findById(
-                        walletOperationWithdrawDTO.getWalletId()))
-                .thenReturn(Optional.of(wallet));
+        Mockito.when(walletRepository.withdraw(
+                walletOperationWithdrawDTO.getAmount(),
+                walletOperationWithdrawDTO.getWalletId())).thenReturn(1);
 
         walletService.operate(walletOperationWithdrawDTO);
 
-        Assertions.assertEquals(400L, wallet.getBalance());
-
-        Mockito.verify(walletRepository).findById(walletOperationWithdrawDTO.getWalletId());
-        Mockito.verify(walletRepository).save(wallet);
+        Mockito.verify(walletRepository).withdraw(walletOperationWithdrawDTO.getAmount(), walletOperationWithdrawDTO.getWalletId());
 
 
     }
 
     @Test
     public void shouldThrowWalletNotFoundException() {
-        Mockito.when(walletRepository.findById(walletOperationWithdrawDTO.getWalletId()))
-                .thenReturn(Optional.empty());
+        Mockito.when(walletRepository.deposit(walletOperationDepositDTO.getAmount(),
+                walletOperationDepositDTO.getWalletId())).thenReturn(0);
 
-        Assertions.assertThrows(WalletNotFoundException.class, () -> walletService.operate(walletOperationWithdrawDTO));
+        Assertions.assertThrows(WalletNotFoundException.class, () -> walletService.operate(walletOperationDepositDTO));
+
+        Mockito.verify(walletRepository).deposit(walletOperationDepositDTO.getAmount(), walletOperationDepositDTO.getWalletId());
+
+
     }
 
     @Test
-    public void shouldThrowNotEnoughBalanceException() {
-        Wallet walletNoEnoughBalance = new Wallet(
-                UUID.fromString("123e4567-e89b-12d3-a456-426614174000"),
-                50L);
-        Mockito.when(walletRepository.findById(walletOperationWithdrawDTO.getWalletId()))
-                .thenReturn(Optional.of(walletNoEnoughBalance));
+    public void shouldThrowWalletNotFoundExceptionIfTypeWithdraw() {
+        Mockito.when(walletRepository.withdraw(walletOperationWithdrawDTO.getAmount(),
+                walletOperationWithdrawDTO.getWalletId())).thenReturn(0);
+        Mockito.when(walletRepository.existsById(walletOperationWithdrawDTO.getWalletId())).thenReturn(false);
 
-        Assertions.assertThrows(NotEnoughBalanceException.class, () -> walletService.operate(walletOperationWithdrawDTO));
+        Assertions.assertThrows(WalletNotFoundException.class, () -> walletService.operate(walletOperationWithdrawDTO));
+
+        Mockito.verify(walletRepository).withdraw(walletOperationWithdrawDTO.getAmount(), walletOperationWithdrawDTO.getWalletId());
+        Mockito.verify(walletRepository).existsById(walletOperationWithdrawDTO.getWalletId());
+
+
     }
 
     @Test
@@ -103,9 +105,6 @@ public class WalletServiceTest {
         WalletOperationDTO walletOperationTestDTO = new WalletOperationDTO(
                 UUID.fromString("123e4567-e89b-12d3-a456-426614174000"),
                 OperationType.TEST, 1000L);
-
-        Mockito.when(walletRepository.findById(walletOperationTestDTO.getWalletId()))
-                .thenReturn(Optional.of(wallet));
 
         Assertions.assertThrows(UnsupportedOperationException.class, () -> walletService.operate(walletOperationTestDTO));
 
@@ -115,9 +114,7 @@ public class WalletServiceTest {
     public void shouldThrowInvalidAmountException() {
         WalletOperationDTO walletOperationTestDTO = new WalletOperationDTO(
                 UUID.fromString("123e4567-e89b-12d3-a456-426614174000"),
-                OperationType.DEPOSIT, -1000L);
-        Mockito.when(walletRepository.findById(walletOperationTestDTO.getWalletId()))
-                .thenReturn(Optional.of(wallet));
+                OperationType.DEPOSIT, -100000L);
 
         Assertions.assertThrows(InvalidAmountException.class, () -> walletService.operate(walletOperationTestDTO));
 

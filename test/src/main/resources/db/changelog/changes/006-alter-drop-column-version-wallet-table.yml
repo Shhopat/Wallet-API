@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-alter-drop-column-version-wallet-table
+      author: ibragim
+      changes:
+        - sql:
+            sql: ALTER TABLE wallet DROP COLUMN version;

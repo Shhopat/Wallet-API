@@ -28,21 +28,32 @@ public class WalletService {
 
     @Transactional
     public void operate(WalletOperationDTO walletOperationDTO) {
-        Wallet wallet = findById(walletOperationDTO.getWalletId());
+        int count;
         if (walletOperationDTO.getAmount() <= 0) {
             throw new InvalidAmountException();
         }
         switch (walletOperationDTO.getOperationType()) {
-            case DEPOSIT -> wallet.setBalance(wallet.getBalance() + walletOperationDTO.getAmount());
-            case WITHDRAW -> {
-                if (wallet.getBalance() < walletOperationDTO.getAmount()) {
-                    throw new NotEnoughBalanceException();
+            case DEPOSIT -> {
+                count = walletRepository.deposit(walletOperationDTO.getAmount(), walletOperationDTO.getWalletId());
+                if (count == 0) {
+                    throw new WalletNotFoundException(walletOperationDTO.getWalletId());
                 }
-                wallet.setBalance(wallet.getBalance() - walletOperationDTO.getAmount());
+            }
+            case WITHDRAW -> {
+
+                count = walletRepository.withdraw(walletOperationDTO.getAmount(), walletOperationDTO.getWalletId());
+                if (count == 0) {
+                    boolean exist = walletRepository.existsById(walletOperationDTO.getWalletId());
+                    if (!exist) {
+                        throw new WalletNotFoundException(walletOperationDTO.getWalletId());
+                    } else {
+                        throw new NotEnoughBalanceException();
+                    }
+                }
             }
             default -> throw new UnsupportedOperationException(walletOperationDTO.getOperationType().toString());
+
         }
-        walletRepository.save(wallet);
     }
 
     @Transactional
